@@ -44,6 +44,23 @@ body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
 .hl{font-weight:900}
 .hn{font-size:4.2rem;font-weight:900;line-height:1.05}
 .refs li{margin-bottom:8px;overflow-wrap:anywhere}
+fieldset.lk{border:3px solid var(--ink);border-radius:12px;margin:0 0 12px;padding:10px 14px 12px;min-width:0}
+fieldset.lk.err{background:#FFE3E8;border-color:#A3122D}
+.lk legend{font-weight:800;padding:0 6px;max-width:100%}
+.opts{display:flex;gap:8px;margin-top:6px}
+.opts label{flex:1;position:relative;display:block}
+.opts input,.pill input{position:absolute;opacity:0;width:1px;height:1px}
+.opts span{display:block;text-align:center;border:3px solid var(--ink);border-radius:10px;padding:8px 0;font-weight:900;cursor:pointer;background:#fff;min-height:46px}
+.opts input:checked+span,.pill input:checked+span{background:var(--lemon);box-shadow:3px 3px 0 var(--ink)}
+.opts input:focus-visible+span,.pill input:focus-visible+span{outline:4px solid #6C4BFF;outline-offset:2px}
+.ends{display:flex;justify-content:space-between;gap:8px;font-size:.8rem;color:var(--mute);margin-top:6px}
+.fld{margin:0 0 18px}
+.fld .t{display:block;font-weight:800;margin-bottom:6px}
+.inp{font:inherit;border:3px solid var(--ink);border-radius:10px;padding:10px 12px;min-height:48px;width:100%;background:#fff;color:var(--ink)}
+.pills{display:flex;flex-direction:column;gap:8px}
+.pill{position:relative;display:block}
+.pill span{display:block;border:3px solid var(--ink);border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer;background:#fff}
+.errm{color:#A3122D;font-weight:800;min-height:1.4em;margin:8px 0 0}
 @media print{
 body{background:#fff;font-size:11.5pt}
 main{max-width:none;padding:0}
@@ -110,6 +127,10 @@ function csvSum(){
   const K=skill(log),Ko=skill(log.filter((x,i)=>i%2===0)),Ke=skill(log.filter((x,i)=>i%2===1)),ms=mean(log.map(x=>ST[x.s].tk))/1000,r4=v=>+v.toFixed(4);
   H.push("control_skill","delta_ticks","sigma_ticks","delta_sec","sigma_sec","control_skill_odd","control_skill_even");V.push(r4(K.sc),K.d,K.sg,r4(K.d*ms),r4(K.sg*ms),r4(Ko.sc),r4(Ke.sc));
   SUB.forEach(([sf,f])=>{const L=log.filter(f);MET.forEach(([n,g])=>{H.push(n+sf);V.push(g(L))})});
+  const bsSc=BS.map((x,i)=>x?(BS_REV[i]?6-x:x):0),bsTot=bsSc.reduce((a,b)=>a+b,0);
+  BS.forEach((x,i)=>{H.push("bscs"+(i+1));V.push(x||"")});
+  H.push("bscs_total","bscs_mean","sex","age","education_code","education","employment");
+  V.push(bsTot,+(bsTot/13).toFixed(4),DEMO.sex,DEMO.age,DEMO.edu,DEMO.edu?EDU_EN[DEMO.edu-1]:"",DEMO.job);
   dl("balon-poin-summary-"+SID+".csv",H,[V]);
 }
 function autoSend(){
@@ -126,6 +147,7 @@ function autoSend(){
 function IDB(l){return ENDPOINT?'<p class="mute">'+(l?"At the end of the session your round data is sent automatically to the researcher.":"Di akhir sesi, data putaranmu dikirim otomatis ke peneliti.")+"</p>":""}
 const REFS=[
 "Adams, R. P., & MacKay, D. J. C. (2007). Bayesian online changepoint detection. arXiv. https://doi.org/10.48550/arXiv.0710.3742",
+"Arifin, H. H., & Milla, M. N. (2020). Adaptasi dan properti psikometrik skala kontrol diri ringkas versi Indonesia. Jurnal Psikologi Sosial, 18(2), 179–195. https://doi.org/10.7454/jps.2020.18",
 "Bayes, T. (1763). An essay towards solving a problem in the doctrine of chances. Philosophical Transactions of the Royal Society of London, 53, 370–418. https://doi.org/10.1098/rstl.1763.0053",
 "Behrens, T. E. J., Woolrich, M. W., Walton, M. E., & Rushworth, M. F. S. (2007). Learning the value of information in an uncertain world. Nature Neuroscience, 10(9), 1214–1221. https://doi.org/10.1038/nn1954",
 "Duckworth, A. L., & Kern, M. L. (2011). A meta-analysis of the convergent validity of self-control measures. Journal of Research in Personality, 45(3), 259–268. https://doi.org/10.1016/j.jrp.2011.02.004",
@@ -135,6 +157,7 @@ const REFS=[
 "McGuire, J. T., & Kable, J. W. (2013). Rational temporal predictions can underlie apparent failures to delay gratification. Psychological Review, 120(2), 395–410. https://doi.org/10.1037/a0031910",
 "Mischel, W., Ebbesen, E. B., & Zeiss, A. R. (1972). Cognitive and attentional mechanisms in delay of gratification. Journal of Personality and Social Psychology, 21(2), 204–218. https://doi.org/10.1037/h0032198",
 "Shannon, C. E. (1948). A mathematical theory of communication. Bell System Technical Journal, 27(3), 379–423. https://doi.org/10.1002/j.1538-7305.1948.tb01338.x",
+"Tangney, J., Baumeister, R., & Boone, A. (2004). High self-control predicts good adjustment, less pathology, better grades, and interpersonal success. Journal of Personality, 72, 271–324. https://doi.org/10.1111/j.0022-3506.2004.00263.x",
 "Tobin, J. (1958). Estimation of relationships for limited dependent variables. Econometrica, 26(1), 24–36. https://doi.org/10.2307/1907382"];
 const app=document.getElementById("app");
 const val=(s,n)=>Math.min(10,ST[s].v0+ST[s].g*n);
@@ -177,8 +200,8 @@ t('<h1>Dua toko, dua watak</h1><p>Ada dua toko balon. Bentuknya beda supaya gamp
 '<h1>Two stores, two temperaments</h1><p>There are two balloon stores. Their shapes differ so you can tell them apart.</p><div class="row"><div>'+mini(0)+'<h3>Green store (round)</h3><ul><li>Slow: +0.5 points per tick (1 tick = 0.45 s)</li><li>Full (10) after about 8.1 s</li><li>Pop chance per tick: 5%, 9%, or 14%</li></ul><p style="margin-top:8px">Patient and rarely pops, but the big payoff takes time.</p></div><div>'+mini(1)+'<h3>Red store (spiky)</h3><ul><li>Fast: +1 point per tick (1 tick = 0.35 s)</li><li>Full (10) after about 2.8 s</li><li>Pop chance per tick: 18%, 27%, or 38%</li></ul><p style="margin-top:8px">Quick but pops often, so the big payoff is rarely reached.</p></div></div><p><b>Neither store is always better.</b> Green is best when you are patient and the mood is calm. Red pays small but fast, and tempts you to keep waiting. In a wild Red store, popping at a low number is normal.</p>'),
 t('<h1>Suasana toko dan tebakan awalmu</h1><p>Tiap toko punya tiga suasana, seperti cuaca: <b>tenang</b>, <b>sedang</b>, <b>ganas</b>. Suasana menentukan peluang meletus (angka di slide sebelumnya, dari kecil ke besar). Kamu tidak diberi tahu sedang di suasana mana.</p><p>Suasana bisa berganti diam-diam: tiap putaran ada peluang 8% berganti, kira-kira sekali dalam 12 putaran.</p><p><b>Tebakan awal (prior).</b> Sebelum ada pengalaman, ketiga suasana sama mungkin:</p>'+PB(t("Tenang","Calm"))+PB(t("Sedang","Medium"))+PB(t("Ganas","Wild"))+'<p>Tiap blok dimulai dari titik ini, dengan suasana acak yang baru. Setelah itu, pakai putaran-putaran sebelumnya sebagai petunjuk: sering meletus cepat berarti mungkin ganas, sering penuh berarti mungkin tenang. Jangan terlalu percaya, karena suasana bisa berubah kapan saja.</p>',
 '<h1>Store mood and your starting guess</h1><p>Each store has three moods, like weather: <b>calm</b>, <b>medium</b>, <b>wild</b>. The mood sets the pop chance (the numbers on the previous slide, smallest to largest). You are not told which mood it is in.</p><p>The mood can change silently: each round has an 8% chance of switching, about once every 12 rounds.</p><p><b>Starting guess (prior).</b> Before any experience, all three moods are equally likely:</p>'+PB("Calm")+PB("Medium")+PB("Wild")+'<p>Every block starts from this point with a fresh random mood. After that, use earlier rounds as clues: frequent early pops suggest wild, frequent full balloons suggest calm. Do not trust them too much, because the mood can change at any time.</p>'),
-t('<h1>Alur sesi</h1><ul><li>Latihan 7 putaran di tiap toko (tidak dihitung).</li><li>Lalu 4 blok, masing-masing 50 putaran: total 200 putaran. Tiap blok satu toko, urutannya diacak.</li><li>Sekitar 15 sampai 17 menit. Ada jeda di antara blok.</li><li>Tombol: <b>Ambil</b> atau tekan spasi.</li><li>Tidak ada jawaban benar atau salah, dan tidak perlu menghitung. Tugasmu menebak suasana toko lalu memutuskan kapan berhenti.</li></ul><p class="mute">Ini prototipe untuk eksperimen, bukan alat diagnosis.</p>',
-'<h1>Session flow</h1><ul><li>7 practice rounds in each store (not counted).</li><li>Then 4 blocks of 50 rounds: 200 rounds in total. Each block uses one store, in random order.</li><li>About 15 to 17 minutes, with breaks between blocks.</li><li>Controls: <b>Take</b> or press space.</li><li>There are no right or wrong answers and no need to calculate. Your job is to guess the store’s mood and decide when to stop.</li></ul><p class="mute">This is an experimental prototype, not a diagnostic tool.</p>')];
+t('<h1>Alur sesi</h1><ul><li>Latihan 7 putaran di tiap toko (tidak dihitung).</li><li>Lalu 4 blok, masing-masing 50 putaran: total 200 putaran. Tiap blok satu toko, urutannya diacak.</li><li>Sekitar 15 sampai 17 menit. Ada jeda di antara blok.</li><li>Setelah semua blok: kuesioner kontrol diri 13 butir dan 4 pertanyaan data diri, baru hasilmu muncul.</li><li>Tombol: <b>Ambil</b> atau tekan spasi.</li><li>Tidak ada jawaban benar atau salah, dan tidak perlu menghitung. Tugasmu menebak suasana toko lalu memutuskan kapan berhenti.</li></ul><p class="mute">Ini prototipe untuk eksperimen, bukan alat diagnosis.</p>',
+'<h1>Session flow</h1><ul><li>7 practice rounds in each store (not counted).</li><li>Then 4 blocks of 50 rounds: 200 rounds in total. Each block uses one store, in random order.</li><li>About 15 to 17 minutes, with breaks between blocks.</li><li>After all blocks: a 13-item self-control questionnaire and 4 questions about you, then your results appear.</li><li>Controls: <b>Take</b> or press space.</li><li>There are no right or wrong answers and no need to calculate. Your job is to guess the store’s mood and decide when to stop.</li></ul><p class="mute">This is an experimental prototype, not a diagnostic tool.</p>')];
 function PB(n){return '<div class="pr"><span>'+n+'</span><i style="width:33%"></i><span>33%</span></div>'}
 function intro(){
   VIEW=intro;cur=null;GO_AT=Date.now()+400;
@@ -188,7 +211,7 @@ function intro(){
 }
 function begin(){
   plan=[{s:0,n:7,prac:true},{s:1,n:7,prac:true}].concat(shuffle([0,1,0,1]).map(s=>({s,n:PER})));
-  bi=0;rd=0;log=[];score=0;SID=Math.random().toString(36).slice(2,10);STAMP=new Date().toISOString();blockIntro();
+  bi=0;rd=0;log=[];score=0;BS=Array(13).fill(0);DEMO={sex:"",age:"",edu:"",job:""};SID=Math.random().toString(36).slice(2,10);STAMP=new Date().toISOString();blockIntro();
 }
 const nm=s=>t("Toko "+ST[s].n,(s?"Red":"Green")+" store");
 function blockIntro(){
@@ -228,8 +251,60 @@ function end(burst){
 }
 function next(){
   rd++;
-  if(rd>=plan[bi].n){bi++;rd=0;if(bi>=plan.length){result();return}blockIntro();return}
+  if(rd>=plan[bi].n){bi++;rd=0;if(bi>=plan.length){survey();return}blockIntro();return}
   startRound();
+}
+
+let BS=Array(13).fill(0),DEMO={sex:"",age:"",edu:"",job:""};
+const BS_REV=[0,1,1,1,1,1,1,1,0,1,1,0,0];
+const BS_ID=["Secara umum, saya dapat menahan godaan apapun dengan baik.","Saya kesulitan menghentikan kebiasaan buruk.","Saya pemalas.","Saya mengatakan hal-hal yang tidak pantas.","Saya melakukan beberapa hal buruk jika hal tersebut menyenangkan.","Saya berharap saya memiliki lebih banyak kedisiplinan diri.","Hal yang menyenangkan dan bersenang-senang kadang menahan saya untuk menyelesaikan pekerjaan.","Saya kesulitan berkonsentrasi.","Saya dapat bekerja dengan efektif dalam meraih tujuan jangka panjang.","Terkadang saya tidak bisa menghentikan diri saya dari sesuatu, meskipun saya tahu itu salah.","Saya sering bertindak tanpa mempertimbangkan seluruh alternatif.","Saya menolak hal-hal yang buruk untuk diri saya","Orang-orang mengatakan saya memiliki kedisiplinan diri yang kuat."];
+const BS_EN=["I am good at resisting temptation.","I have a hard time breaking bad habits.","I am lazy.","I say inappropriate things.","I do certain things that are bad for me, if they are fun.","I wish I had more self-discipline.","Pleasure and fun sometimes keep me from getting work done.","I have trouble concentrating.","I am able to work effectively toward long-term goals.","Sometimes I can’t stop myself from doing something, even if I know it is wrong.","I often act without thinking through all the alternatives.","I refuse things that are bad for me.","People would say that I have iron self-discipline."];
+const EDU_ID=["Tidak tamat SD","Lulus SD/sederajat","Lulus SMP/sederajat","Lulus SMA/SMK/sederajat","Lulus Diploma (D1–D3)","Lulus S1/D4","Lulus S2","Lulus S3"];
+const EDU_EN=["Did not finish elementary school","Elementary school graduate","Junior high school graduate","Senior high/vocational school graduate","Diploma graduate (D1–D3)","Bachelor’s graduate (S1/D4)","Master’s graduate (S2)","Doctorate graduate (S3)"];
+const pill=(nm,v,l,on)=>'<label class="pill"><input type="radio" name="'+nm+'" value="'+v+'"'+(on?" checked":"")+'><span>'+l+'</span></label>';
+function survey(){
+  VIEW=survey;cur=null;
+  const Q=LG==="id"?BS_ID:BS_EN;
+  let h='<h1>'+t("Kuesioner kontrol diri","Self-control questionnaire")+'</h1><p>'+t("Sesi balon sudah selesai. Sekarang jawab 13 pernyataan berikut tentang dirimu secara umum. Tidak ada jawaban benar atau salah.","The balloon session is finished. Now answer the following 13 statements about yourself in general. There are no right or wrong answers.")+'</p><p><b>'+t("1 = Sama sekali tidak seperti saya, 5 = Sangat seperti saya","1 = Not at all like me, 5 = Very much like me")+'</b></p><p class="mute" id="pg"></p>';
+  Q.forEach((q,i)=>{
+    h+='<fieldset class="lk" id="q'+i+'"><legend>'+(i+1)+'. '+q+'</legend><div class="opts">';
+    for(let v=1;v<=5;v++)h+='<label><input type="radio" name="b'+i+'" value="'+v+'"'+(BS[i]===v?" checked":"")+'><span>'+v+'</span></label>';
+    h+='</div><div class="ends"><span>'+t("Sama sekali tidak seperti saya","Not at all like me")+'</span><span>'+t("Sangat seperti saya","Very much like me")+'</span></div></fieldset>';
+  });
+  h+='<p class="errm" id="em" role="alert"></p><div class="nav"><span></span><button id="sn">'+t("Lanjut","Next")+'</button></div><p class="mute" style="margin-top:14px">'+t("Skala: Brief Self-Control Scale, versi Indonesia (Arifin & Milla, 2020), diadaptasi dari Tangney dkk. (2004).","Scale: Brief Self-Control Scale, Indonesian version (Arifin & Milla, 2020), adapted from Tangney et al. (2004).")+'</p>';
+  show(h,true);window.scrollTo(0,0);
+  const pg=()=>{document.getElementById("pg").textContent=t("Terjawab ","Answered ")+BS.filter(x=>x).length+"/13"};pg();
+  app.querySelectorAll('input[type=radio]').forEach(e=>e.onchange=()=>{BS[+e.name.slice(1)]=+e.value;e.closest("fieldset").classList.remove("err");document.getElementById("em").textContent="";pg()});
+  document.getElementById("sn").onclick=()=>{
+    const i=BS.findIndex(x=>!x);
+    if(i>=0){const f=document.getElementById("q"+i);f.classList.add("err");document.getElementById("em").textContent=t("Masih ada pernyataan yang belum dijawab.","Some statements are still unanswered.");f.scrollIntoView({block:"center"});return}
+    demo();
+  };
+}
+function demo(){
+  VIEW=demo;cur=null;
+  const sx=[["male",t("Laki-laki","Male")],["female",t("Perempuan","Female")],["na",t("Memilih tidak menjawab","Prefer not to say")]];
+  const jb=[["working",t("Bekerja","Working")],["not_working",t("Tidak bekerja","Not working")]];
+  const ED=LG==="id"?EDU_ID:EDU_EN;
+  const h='<h1>'+t("Data diri","About you")+'</h1><p>'+t("Empat pertanyaan terakhir. Datamu dipakai untuk penelitian dan tidak menampilkan namamu.","The last four questions. Your answers are used for research and do not show your name.")+'</p>'+
+  '<div class="fld"><div class="t">'+t("Jenis kelamin","Sex")+'</div><div class="pills">'+sx.map(a=>pill("sex",a[0],a[1],DEMO.sex===a[0])).join("")+'</div></div>'+
+  '<div class="fld"><label class="t" for="age">'+t("Usia (dalam tahun, angka saja)","Age (in years, numbers only)")+'</label><input class="inp" id="age" type="number" inputmode="numeric" min="10" max="100" step="1" value="'+DEMO.age+'"></div>'+
+  '<div class="fld"><label class="t" for="edu">'+t("Tingkat pendidikan","Level of education")+'</label><select class="inp" id="edu"><option value="">'+t("Pilih...","Select...")+'</option>'+ED.map((e,i)=>'<option value="'+(i+1)+'"'+(DEMO.edu==i+1?" selected":"")+'>'+e+'</option>').join("")+'</select></div>'+
+  '<div class="fld"><div class="t">'+t("Status pekerjaan","Employment status")+'</div><div class="pills">'+jb.map(a=>pill("job",a[0],a[1],DEMO.job===a[0])).join("")+'</div></div>'+
+  '<p class="errm" id="em" role="alert"></p><div class="nav"><button class="alt" id="bk">'+t("Kembali","Back")+'</button><button id="dn">'+t("Lihat hasil","See results")+'</button></div>';
+  show(h,true);window.scrollTo(0,0);
+  app.querySelectorAll('input[name=sex]').forEach(e=>e.onchange=()=>{DEMO.sex=e.value});
+  app.querySelectorAll('input[name=job]').forEach(e=>e.onchange=()=>{DEMO.job=e.value});
+  document.getElementById("age").oninput=e=>{DEMO.age=e.target.value.trim()};
+  document.getElementById("edu").onchange=e=>{DEMO.edu=e.target.value};
+  document.getElementById("bk").onclick=survey;
+  document.getElementById("dn").onclick=()=>{
+    const a=DEMO.age,n=Number(a);let m="";
+    if(!DEMO.sex||!a||!DEMO.edu||!DEMO.job)m=t("Mohon jawab semua pertanyaan.","Please answer every question.");
+    else if(!/^\d+$/.test(a)||n<10||n>100)m=t("Usia harus angka bulat antara 10 dan 100.","Age must be a whole number between 10 and 100.");
+    if(m){document.getElementById("em").textContent=m;return}
+    result();
+  };
 }
 
 function chart(series,ymax,label){
